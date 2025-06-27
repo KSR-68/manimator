@@ -1,7 +1,7 @@
 # 🎬 Manimator
 
 **Manimator** is an AI-powered tool that converts natural language descriptions into beautiful [Manim](https://www.manim.community/) animations.  
-It leverages Google Gemini for code generation and uses an MCP (Multi-Channel Protocol) server to render animations programmatically.
+It leverages Google Gemini for code generation and uses an MCP (Model Context Protocol) server to render animations programmatically.
 
 ---
 
@@ -49,7 +49,7 @@ cd manimator
 - Python 3.10+ recommended
 - [Manim Community Edition](https://docs.manim.community/en/stable/installation.html)
 - [Google GenerativeAI Python SDK](https://github.com/google/generative-ai-python)
-- MCP Python client/server (see `pyproject.toml`)
+- MCP Python client/server (https://modelcontextprotocol.io/introduction)
 
 ```bash
 # Using uv (recommended)
