@@ -80,6 +80,7 @@ class ManimatorClient:
         - The code must start with `from manim import *`
         - Define exactly one Scene subclass
         - No explanation, no markdown, just clean executable code.
+        _ Don't Use your own function like get_graph(), use plot() instead. 
         Description: {description}
         """
         response = self.genai_client.models.generate_content(
@@ -88,12 +89,35 @@ class ManimatorClient:
             config=types.GenerateContentConfig(tools=self.function_declarations)
         )
 
-        manim_code = response.text.strip()
+        # --- HANDLE FUNCTION CALL OR TEXT RESPONSE ---
+        manim_code = None
+        candidates = response.candidates
+        parts = candidates[0].content.parts if candidates else []
+
+        # First try to get it from function_call
+        for part in parts:
+            if hasattr(part, "function_call") and part.function_call:
+                if part.function_call.name == "execute_manim_code":
+                    manim_code = part.function_call.args.get("manim_code", "").strip()
+                    break
+
+        # Fallback to plain text (if not a tool call)
+        if not manim_code:
+            text_part = next((p.text for p in parts if hasattr(p, "text")), None)
+            if text_part:
+                manim_code = text_part.strip()
+
+        if not manim_code:
+            raise ValueError("❌ Gemini did not return valid Manim code.")
+
+        # Remove markdown formatting if present
         if manim_code.startswith("```python"):
             manim_code = manim_code[9:]
         if manim_code.endswith("```"):
             manim_code = manim_code[:-3]
-        print("✅ Code generated.")
+
+        print("✅ Code extracted from Gemini.")
+
 
         print("🔥 Step 2: Executing animation...")
         result = await self.session.call_tool("execute_manim_code", {"manim_code": manim_code})

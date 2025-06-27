@@ -8,7 +8,7 @@ from manim import config, tempconfig
 
 mcp = FastMCP()
 logger = logging.getLogger(__name__)
-# configure logging as before...
+# configure logging
 
 MANIM_MEDIA_SUBDIR = "media/manim_tmp"
 
@@ -49,7 +49,7 @@ def execute_manim_code(manim_code: str) -> str:
             "media_dir": tmpdir,
             "format": "mp4",
             "quality": "low_quality",    # or "medium"/"high" as you like
-            "renderer": "cairo", # or "opengl"
+            "renderer": "opengl", # or "cairo if you don't have GPU"
         }
         with tempconfig(cfg):
             scene = SceneClass()
